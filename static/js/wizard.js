@@ -148,8 +148,10 @@ class SevoWizard {
             const label = document.createElement('label');
             label.htmlFor = `platform_${platform.value}`;
             label.innerHTML = `
-                <strong>${platform.label}</strong>
-                <br><small>${platform.description}</small>
+                <span class="checkbox-label-content">
+                    <span class="checkbox-label-title">${platform.label}</span>
+                    <span class="checkbox-label-description">${platform.description}</span>
+                </span>
             `;
             
             card.appendChild(checkbox);
