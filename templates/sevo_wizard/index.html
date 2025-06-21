@@ -1,0 +1,379 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rankenstein SEvO Configuration Wizard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% csrf_token %}
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="background-animation">
+        <div class="particles"></div>
+        <div class="gradient-overlay"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <h1>Rankenstein</h1>
+                <span class="subtitle">SEvO Configuration Wizard</span>
+            </div>
+        </header>
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">Step 1 of 10</div>
+        </div>
+
+        <!-- Form Container -->
+        <div class="form-container">
+            <div class="form-card" id="formCard">
+                <!-- Step 1: Campaign Goal & Core Topic -->
+                <div class="step" id="step1" data-step="1">
+                    <div class="step-header">
+                        <h2>Campaign Goal & Core Topic</h2>
+                        <p class="step-description">Let's start by understanding your campaign objectives</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="campaignGoal">What's the main goal for this campaign? *</label>
+                        <p class="field-description">This will help us tailor content across all platforms.</p>
+                        <select id="campaignGoal" name="campaignGoal" required>
+                            <option value="">Select a campaign goal</option>
+                            <option value="increase_brand_awareness">Increase Brand Awareness</option>
+                            <option value="drive_website_traffic">Drive Website Traffic</option>
+                            <option value="generate_leads">Generate Leads</option>
+                            <option value="boost_sales_conversions">Boost Sales/Conversions</option>
+                            <option value="improve_seo_rankings">Improve SEO Rankings</option>
+                            <option value="build_thought_leadership">Build Thought Leadership</option>
+                            <option value="customer_education">Customer Education</option>
+                            <option value="product_launch">Product Launch</option>
+                            <option value="crisis_management">Crisis Management</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group conditional-field" id="campaignGoalOtherField" style="display: none;">
+                        <label for="campaignGoalOther">Please specify your campaign goal *</label>
+                        <input type="text" id="campaignGoalOther" name="campaignGoalOther" placeholder="Please specify your campaign goal">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mainContentTopic">What's the main topic for your core content? *</label>
+                        <p class="field-description">This will be the foundation for all platform adaptations.</p>
+                        <input type="text" id="mainContentTopic" name="mainContentTopic" placeholder="e.g., Benefits of Filtered Showerheads" required>
+                    </div>
+                </div>
+
+                <!-- Step 2: Content Format & Keywords -->
+                <div class="step" id="step2" data-step="2" style="display: none;">
+                    <div class="step-header">
+                        <h2>Content Format & Keywords</h2>
+                        <p class="step-description">Define your content structure and SEO foundation</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="masterContentFormat">What format will this primary content take? *</label>
+                        <p class="field-description">This determines how we'll adapt it for different platforms.</p>
+                        <select id="masterContentFormat" name="masterContentFormat" required>
+                            <option value="">Select content format</option>
+                            <option value="blog_post_article">Blog Post / Article</option>
+                            <option value="video_content">Video Content</option>
+                            <option value="podcast_episode">Podcast Episode</option>
+                            <option value="infographic">Infographic</option>
+                            <option value="case_study">Case Study</option>
+                            <option value="how_to_guide">How-to Guide</option>
+                            <option value="product_review">Product Review</option>
+                            <option value="interview">Interview</option>
+                            <option value="webinar">Webinar</option>
+                            <option value="white_paper">White Paper</option>
+                            <option value="email_newsletter">Email Newsletter</option>
+                            <option value="social_media_post">Social Media Post</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group conditional-field" id="masterContentFormatOtherField" style="display: none;">
+                        <label for="masterContentFormatOther">Please specify content format *</label>
+                        <input type="text" id="masterContentFormatOther" name="masterContentFormatOther" placeholder="Please specify content format">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="seedKeywords">Any initial keywords you have in mind? (Optional)</label>
+                        <p class="field-description">These help with SEO optimization.</p>
+                        <input type="text" id="seedKeywords" name="seedKeywords" placeholder="e.g., best shower filters, hard water solution">
+                    </div>
+                </div>
+
+                <!-- Step 3: Content Details & Audience Knowledge -->
+                <div class="step" id="step3" data-step="3" style="display: none;">
+                    <div class="step-header">
+                        <h2>Content Details & Audience Knowledge</h2>
+                        <p class="step-description">Refine your content specifications and audience understanding</p>
+                    </div>
+                    
+                    <div class="form-group" id="wordCountGroup">
+                        <label for="targetWordCount">Do you have a target length or word count for this content?</label>
+                        <p class="field-description">We can also suggest optimal length (optional).</p>
+                        <div class="slider-container">
+                            <input type="range" id="targetWordCount" name="targetWordCount" min="250" max="5000" value="1500" step="250">
+                            <div class="slider-value" id="wordCountValue">1500 words</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="audienceKnowledgeLevel">How familiar is your target audience with this topic?</label>
+                        <p class="field-description">This helps us tailor the complexity and depth.</p>
+                        <select id="audienceKnowledgeLevel" name="audienceKnowledgeLevel" required>
+                            <option value="">Select audience knowledge level</option>
+                            <option value="beginner">Beginner (Little to no prior knowledge)</option>
+                            <option value="intermediate">Intermediate (Some familiarity)</option>
+                            <option value="advanced">Advanced (High expertise)</option>
+                            <option value="mixed_audience">Mixed Audience</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 4: Audience Characteristics & Internal Linking -->
+                <div class="step" id="step4" data-step="4" style="display: none;">
+                    <div class="step-header">
+                        <h2>Audience Characteristics & Internal Linking</h2>
+                        <p class="step-description">Deep dive into your audience and site structure</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="audienceCharacteristics">Tell us a bit about your audience. (Optional)</label>
+                        <p class="field-description">Key problems, interests, and preferred content style?</p>
+                        <textarea id="audienceCharacteristics" name="audienceCharacteristics" rows="4" placeholder="- Key Problem/Need: [e.g., Hard water damaging hair]&#10;- Main Interest: [e.g., Natural home solutions]&#10;- Content Style: [e.g., Quick tips, visual guides]"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="internalLinkingPages">Any key site pages this new content should link with? (Optional)</label>
+                        <p class="field-description">Helps with SEO and user navigation.</p>
+                        <textarea id="internalLinkingPages" name="internalLinkingPages" rows="3" placeholder="List 1-3 existing pages: e.g., /hard-water-effects, yoursite.com/another-page"></textarea>
+                    </div>
+                </div>
+
+                <!-- Step 5: Platform Recommendation & Target Selection -->
+                <div class="step" id="step5" data-step="5" style="display: none;">
+                    <div class="step-header">
+                        <h2>Platform Recommendation & Target Selection</h2>
+                        <p class="step-description">Choose your content distribution strategy</p>
+                    </div>
+                    
+                    <div class="platform-recommendation">
+                        <h3>We recommend focusing on:</h3>
+                        <div class="recommendation-list" id="recommendationList">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Which platforms do you want to actively target? *</label>
+                        <p class="field-description">Select all that apply - we've pre-selected our recommendations based on our analysis.</p>
+                        <div class="checkbox-grid" id="platformCheckboxes">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 6: Platforms to AVOID -->
+                <div class="step" id="step6" data-step="6" style="display: none;">
+                    <div class="step-header">
+                        <h2>Platforms to AVOID</h2>
+                        <p class="step-description">Specify any platforms you'd like to exclude</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="avoidPlatforms">Any platforms you'd specifically like to AVOID? (Optional)</label>
+                        <p class="field-description">Let us know if there are any platforms you want to exclude from your strategy.</p>
+                        <input type="text" id="avoidPlatforms" name="avoidPlatforms" placeholder="e.g., TikTok, specific forums, Facebook">
+                    </div>
+                </div>
+
+                <!-- Step 7: Brand Foundation -->
+                <div class="step" id="step7" data-step="7" style="display: none;">
+                    <div class="step-header">
+                        <h2>Brand Foundation</h2>
+                        <p class="step-description">Establish your brand identity and online presence</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="websiteURL">What's your primary website URL? *</label>
+                        <p class="field-description">We'll use this to understand your online presence.</p>
+                        <input type="url" id="websiteURL" name="websiteURL" placeholder="https://www.yourwebsite.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="brandName">What's your brand name? *</label>
+                        <p class="field-description">Please enter your brand name.</p>
+                        <input type="text" id="brandName" name="brandName" placeholder="Enter your brand name" required>
+                    </div>
+                </div>
+
+                <!-- Step 8: Brand Voice & E-E-A-T -->
+                <div class="step" id="step8" data-step="8" style="display: none;">
+                    <div class="step-header">
+                        <h2>Brand Voice & E-E-A-T</h2>
+                        <p class="step-description">Define your brand personality and establish authority</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>How would you describe your brand's voice and tone?</label>
+                        <p class="field-description">Select all that apply.</p>
+                        <div class="checkbox-grid" id="brandVoiceCheckboxes">
+                            <div class="checkbox-card">
+                                <input type="checkbox" id="voice_professional" name="brandVoiceTone" value="Professional">
+                                <label for="voice_professional">Professional</label>
+                            </div>
+                            <div class="checkbox-card">
+                                <input type="checkbox" id="voice_authoritative" name="brandVoiceTone" value="Authoritative">
+                                <label for="voice_authoritative">Authoritative</label>
+                            </div>
+                            <div class="checkbox-card">
+                                <input type="checkbox" id="voice_educational" name="brandVoiceTone" value="Educational">
+                                <label for="voice_educational">Educational</label>
+                            </div>
+                            <div class="checkbox-card">
+                                <input type="checkbox" id="voice_friendly" name="brandVoiceTone" value="Friendly">
+                                <label for="voice_friendly">Friendly</label>
+                            </div>
+                            <div class="checkbox-card">
+                                <input type="checkbox" id="voice_witty" name="brandVoiceTone" value="Witty / Humorous">
+                                <label for="voice_witty">Witty / Humorous</label>
+                            </div>
+                            <div class="checkbox-card">
+                                <input type="checkbox" id="voice_inspiring" name="brandVoiceTone" value="Inspiring / Motivational">
+                                <label for="voice_inspiring">Inspiring / Motivational</label>
+                            </div>
+                            <div class="checkbox-card">
+                                <input type="checkbox" id="voice_casual" name="brandVoiceTone" value="Casual / Conversational">
+                                <label for="voice_casual">Casual / Conversational</label>
+                            </div>
+                            <div class="checkbox-card">
+                                <input type="checkbox" id="voice_technical" name="brandVoiceTone" value="Technical / Formal">
+                                <label for="voice_technical">Technical / Formal</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="otherVoiceDescriptors">Any other key voice descriptors? (Optional)</label>
+                        <input type="text" id="otherVoiceDescriptors" name="otherVoiceDescriptors" placeholder="Any other key voice descriptors? (optional)">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="eeatHighlights">What are some key highlights that showcase your expertise? (Optional)</label>
+                        <p class="field-description">Experience, Expertise, Authoritativeness, Trustworthiness</p>
+                        <textarea id="eeatHighlights" name="eeatHighlights" rows="4" placeholder="e.g., 10+ years industry experience, Certified X, Featured in Y Publication..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="topContentURLs">Share up to 3 URLs of your existing top content. (Optional)</label>
+                        <p class="field-description">Helps us understand your strengths. List one URL per line.</p>
+                        <textarea id="topContentURLs" name="topContentURLs" rows="3" placeholder="yoursite.com/best-article-1&#10;yoursite.com/another-great-piece&#10;yoursite.com/case-study-example"></textarea>
+                    </div>
+                </div>
+
+                <!-- Step 9: Visual Preferences -->
+                <div class="step" id="step9" data-step="9" style="display: none;">
+                    <div class="step-header">
+                        <h2>Visual Preferences</h2>
+                        <p class="step-description">Define your visual style and brand aesthetics</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="visualStyle">What's the primary visual style you prefer? (Optional)</label>
+                        <p class="field-description">Guides image creation.</p>
+                        <select id="visualStyle" name="visualStyle">
+                            <option value="">Select visual style</option>
+                            <option value="modern_clean">Modern & Clean</option>
+                            <option value="professional_corporate">Professional & Corporate</option>
+                            <option value="creative_artistic">Creative & Artistic</option>
+                            <option value="minimal_simple">Minimal & Simple</option>
+                            <option value="bold_vibrant">Bold & Vibrant</option>
+                            <option value="elegant_sophisticated">Elegant & Sophisticated</option>
+                            <option value="fun_playful">Fun & Playful</option>
+                            <option value="technical_data_driven">Technical & Data-driven</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="aestheticRequirements">Any specific color schemes or aesthetic requirements? (Optional)</label>
+                        <p class="field-description">Help us match your brand perfectly.</p>
+                        <input type="text" id="aestheticRequirements" name="aestheticRequirements" placeholder="e.g., Yellow, white, blue or color code #FFFF00, #FFFFFF, #0000FF">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="logoURL">Have a logo? Share the URL for reference. (Optional)</label>
+                        <p class="field-description">For visual reference during content creation.</p>
+                        <input type="url" id="logoURL" name="logoURL" placeholder="https://www.yourwebsite.com/logo.png">
+                    </div>
+                </div>
+
+                <!-- Step 10: Final Submission -->
+                <div class="step" id="step10" data-step="10" style="display: none;">
+                    <div class="step-header">
+                        <h2>All Set to Go!</h2>
+                        <p class="step-description">Review your selections if needed using the "Back" button, or submit to get your content.</p>
+                    </div>
+                    
+                    <div class="summary-section">
+                        <h3>Campaign Summary</h3>
+                        <div class="summary-grid" id="campaignSummary">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Confirmation Screen -->
+                <div class="step" id="confirmation" data-step="11" style="display: none;">
+                    <div class="confirmation-content">
+                        <div class="checkmark">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <h2>Awesome! Your Content is Being Generated.</h2>
+                        <p>Your content will be ready in approximately 20-25 minutes.</p>
+                        <button type="button" class="btn btn-primary" id="createAnotherBtn">
+                            <i class="fas fa-plus"></i> Create Another Campaign
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="navigation-buttons">
+            <button type="button" class="btn btn-secondary" id="backBtn" style="display: none;">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <button type="button" class="btn btn-primary" id="nextBtn">
+                Next <i class="fas fa-arrow-right"></i>
+            </button>
+            <button type="button" class="btn btn-success" id="submitBtn" style="display: none;">
+                <i class="fas fa-rocket"></i> Generate My Content
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Submitting your campaign...</p>
+        </div>
+    </div>
+
+    <script src="{% static 'js/wizard.js' %}"></script>
+</body>
+</html> 
