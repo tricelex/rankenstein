@@ -46,6 +46,90 @@ class SevoWizard {
         
         // Conditional field events
         this.bindConditionalEvents();
+        
+        // URL validation events
+        this.bindUrlValidationEvents();
+    }
+
+    bindUrlValidationEvents() {
+        // Get all URL input fields
+        const urlInputs = document.querySelectorAll('input[type="url"]');
+        
+        urlInputs.forEach(input => {
+            // Add input event for real-time validation
+            input.addEventListener('input', (e) => {
+                this.validateUrlField(e.target);
+                this.saveCurrentStepData();
+                this.validateCurrentStep();
+                this.updateNavigationButtons();
+            });
+            
+            // Add blur event for final validation
+            input.addEventListener('blur', (e) => {
+                this.validateUrlField(e.target);
+            });
+            
+            // Add focus event to clear errors when user starts typing
+            input.addEventListener('focus', (e) => {
+                this.clearFieldError(e.target);
+                this.clearFieldSuccess(e.target);
+            });
+        });
+    }
+
+    validateUrlField(field) {
+        const value = field.value.trim();
+        
+        // If field is empty and not required, it's valid
+        if (!value && !field.hasAttribute('required')) {
+            this.clearFieldError(field);
+            this.clearFieldSuccess(field);
+            return true;
+        }
+        
+        // If field is empty and required, show error
+        if (!value && field.hasAttribute('required')) {
+            this.showFieldError(field, 'This field is required.');
+            this.clearFieldSuccess(field);
+            return false;
+        }
+        
+        // Auto-add protocol if missing
+        let processedValue = value;
+        if (value && !/^https?:\/\//i.test(value)) {
+            // Check if it looks like a domain (contains a dot and no spaces)
+            if (value.includes('.') && !value.includes(' ')) {
+                processedValue = 'https://' + value;
+                field.value = processedValue;
+            }
+        }
+        
+        // Check if URL has a protocol
+        const urlPattern = /^https?:\/\//i;
+        if (!urlPattern.test(processedValue)) {
+            this.showFieldError(field, 'Please enter a complete URL including the protocol (e.g., https://example.com)');
+            this.clearFieldSuccess(field);
+            return false;
+        }
+        
+        // Additional URL validation
+        try {
+            const url = new URL(processedValue);
+            if (!url.hostname) {
+                this.showFieldError(field, 'Please enter a valid URL with a domain name');
+                this.clearFieldSuccess(field);
+                return false;
+            }
+        } catch (error) {
+            this.showFieldError(field, 'Please enter a valid URL format');
+            this.clearFieldSuccess(field);
+            return false;
+        }
+        
+        // URL is valid - show success state
+        this.clearFieldError(field);
+        this.showFieldSuccess(field);
+        return true;
     }
 
     bindFormEvents() {
@@ -284,12 +368,27 @@ class SevoWizard {
                 } else {
                     this.clearFieldError(field);
                 }
+            } else if (field.type === 'url') {
+                // Special validation for URL fields
+                if (!this.validateUrlField(field)) {
+                    isValid = false;
+                }
             } else {
                 if (!fieldValue) {
                     isValid = false;
                     this.showFieldError(field, 'This field is required');
                 } else {
                     this.clearFieldError(field);
+                }
+            }
+        });
+
+        // Also validate non-required URL fields if they have content
+        const urlFields = currentStepElement.querySelectorAll('input[type="url"]:not([required])');
+        urlFields.forEach(field => {
+            if (field.value.trim()) {
+                if (!this.validateUrlField(field)) {
+                    isValid = false;
                 }
             }
         });
@@ -319,6 +418,30 @@ class SevoWizard {
         const errorMessage = field.parentNode.querySelector('.error-message');
         if (errorMessage) {
             errorMessage.remove();
+        }
+    }
+
+    showFieldSuccess(field) {
+        field.classList.add('success');
+        
+        // Remove existing success message
+        const existingSuccess = field.parentNode.querySelector('.success-message');
+        if (existingSuccess) {
+            existingSuccess.remove();
+        }
+        
+        // Add new success message
+        const successDiv = document.createElement('div');
+        successDiv.className = 'success-message';
+        successDiv.textContent = 'URL is valid';
+        field.parentNode.appendChild(successDiv);
+    }
+
+    clearFieldSuccess(field) {
+        field.classList.remove('success');
+        const successMessage = field.parentNode.querySelector('.success-message');
+        if (successMessage) {
+            successMessage.remove();
         }
     }
 
